@@ -11,7 +11,7 @@ on:
       answer_delay_minutes:
         description: "Delay trước khi reveal answer (phút)"
         required: false
-        default: "240"
+        default: "1"
 
 jobs:
   post-quiz:
@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
 
     permissions:
-      contents: write   # cần để commit used_ids.json
+      contents: write # cần để commit used_ids.json
 
     steps:
       # 1. Checkout repo (để đọc/ghi used_ids.json)
@@ -42,9 +42,9 @@ jobs:
       # 4. Chạy script
       - name: Send quiz
         env:
-          SLACK_BOT_TOKEN:  ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
           SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
-          ANSWER_DELAY_MS:  ${{ steps.delay.outputs.delay_ms }}
+          ANSWER_DELAY_MS: ${{ steps.delay.outputs.delay_ms }}
         run: node scripts/send_quiz.js
 
       # 5. Commit used_ids.json (track câu đã dùng)
