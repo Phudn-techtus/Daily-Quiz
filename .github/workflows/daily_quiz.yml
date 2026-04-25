@@ -2,8 +2,8 @@ name: Daily QA Quiz
 
 on:
   # ── Auto: 9:00 SA giờ VN (UTC+7 = 02:00 UTC), thứ 2 đến thứ 6 ──
-  schedule:
-    - cron: "0 2 * * 1-5"
+  # schedule:
+  #   - cron: "0 2 * * 1-5"
 
   # ── Manual trigger từ GitHub UI (Actions tab → Run workflow) ──
   workflow_dispatch:
