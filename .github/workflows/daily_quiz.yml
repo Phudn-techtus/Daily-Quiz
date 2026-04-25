@@ -11,7 +11,7 @@ on:
       answer_delay_minutes:
         description: "Delay trước khi reveal answer (phút)"
         required: false
-        default: "1"
+        default: "240"
 
 jobs:
   post-quiz:
