@@ -1,0 +1,394 @@
+{
+  "meta": {
+    "version": "2.0",
+    "description": "Daily Quiz question bank for QA Team Slack channel",
+    "topics": ["sql", "plw", "perf", "api", "istqb"],
+    "levels": ["easy", "medium", "hard"],
+    "total_questions": 55,
+    "usage": "Pick 1 random question per day per topic, or use /daily-quiz endpoint to get a question block"
+  },
+  "slack_block_template": {
+    "note": "Use this template structure to post to Slack via Block Kit. Replace {{placeholders}} with question data.",
+    "blocks": [
+      {
+        "type": "header",
+        "text": { "type": "plain_text", "text": "🧠 Daily Quiz — {{topic_label}} ({{level_label}})" }
+      },
+      {
+        "type": "section",
+        "text": { "type": "mrkdwn", "text": "*{{question}}*" }
+      },
+      {
+        "type": "section",
+        "text": { "type": "mrkdwn", "text": "🅐 {{opt_a}}\n🅑 {{opt_b}}\n🅒 {{opt_c}}\n🅓 {{opt_d}}" }
+      },
+      {
+        "type": "context",
+        "elements": [{ "type": "mrkdwn", "text": "React với A/B/C/D · Đáp án sẽ được reveal sau 4 giờ ⏳" }]
+      }
+    ],
+    "answer_reveal_blocks": [
+      {
+        "type": "section",
+        "text": { "type": "mrkdwn", "text": "✅ *Đáp án: {{answer_letter}} — {{answer_text}}*\n\n💡 {{explanation}}" }
+      }
+    ]
+  },
+  "questions": [
+    {
+      "id": "sql_001", "topic": "sql", "topic_label": "SQL", "level": "easy", "level_label": "Cơ bản",
+      "question": "Lệnh SQL nào lấy toàn bộ dữ liệu từ bảng?",
+      "options": ["GET ALL FROM table", "SELECT * FROM table", "FETCH * FROM table", "READ table"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "SELECT * FROM table",
+      "explanation": "SELECT * FROM table là cú pháp chuẩn. Dấu * nghĩa là tất cả cột trong bảng."
+    },
+    {
+      "id": "sql_002", "topic": "sql", "topic_label": "SQL", "level": "easy", "level_label": "Cơ bản",
+      "question": "Mệnh đề nào lọc hàng trong SQL?",
+      "options": ["FILTER", "HAVING", "WHERE", "CONDITION"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "WHERE",
+      "explanation": "WHERE lọc hàng trước khi GROUP BY. HAVING lọc sau khi đã nhóm xong và không dùng được với aggregate functions trực tiếp như WHERE."
+    },
+    {
+      "id": "sql_003", "topic": "sql", "topic_label": "SQL", "level": "easy", "level_label": "Cơ bản",
+      "question": "Từ khóa nào loại bỏ hàng trùng lặp trong SELECT?",
+      "options": ["UNIQUE", "DISTINCT", "NODUPE", "FILTER"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "DISTINCT",
+      "explanation": "SELECT DISTINCT col trả về các giá trị không trùng. Ví dụ: SELECT DISTINCT city FROM customers."
+    },
+    {
+      "id": "sql_004", "topic": "sql", "topic_label": "SQL", "level": "easy", "level_label": "Cơ bản",
+      "question": "Lệnh nào xóa toàn bộ dữ liệu trong bảng nhưng GIỮ cấu trúc bảng?",
+      "options": ["DROP TABLE", "DELETE FROM table", "TRUNCATE TABLE", "REMOVE ALL FROM table"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "TRUNCATE TABLE",
+      "explanation": "TRUNCATE TABLE xóa toàn bộ dữ liệu nhanh hơn DELETE (không log từng hàng), nhưng giữ schema. DROP xóa luôn cả bảng."
+    },
+    {
+      "id": "sql_005", "topic": "sql", "topic_label": "SQL", "level": "easy", "level_label": "Cơ bản",
+      "question": "DELETE khác TRUNCATE ở điểm nào quan trọng nhất?",
+      "options": ["DELETE nhanh hơn", "DELETE có thể dùng WHERE để xóa có điều kiện, TRUNCATE xóa toàn bộ", "Không có sự khác biệt", "TRUNCATE chậm hơn"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "DELETE có thể dùng WHERE, TRUNCATE xóa toàn bộ",
+      "explanation": "DELETE có WHERE lọc hàng cụ thể, ghi transaction log từng hàng → rollback được. TRUNCATE xóa tất cả, không log từng hàng → nhanh hơn nhưng không rollback được trong nhiều DBMS."
+    },
+    {
+      "id": "sql_006", "topic": "sql", "topic_label": "SQL", "level": "easy", "level_label": "Cơ bản",
+      "question": "Hàm nào đếm số hàng bao gồm cả NULL?",
+      "options": ["COUNT(column)", "COUNT(DISTINCT column)", "COUNT(*)", "SUM(1)"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "COUNT(*)",
+      "explanation": "COUNT(*) đếm tất cả hàng kể cả NULL. COUNT(column) bỏ qua NULL. COUNT(DISTINCT col) đếm giá trị không trùng không null."
+    },
+    {
+      "id": "sql_007", "topic": "sql", "topic_label": "SQL", "level": "medium", "level_label": "Trung bình",
+      "question": "GROUP BY với 2 cột hoạt động thế nào?",
+      "options": ["Không thể GROUP BY 2 cột", "Nhóm theo cột đầu tiên, bỏ cột 2", "Tạo nhóm từ sự kết hợp duy nhất của cả 2 cột", "Nhóm theo cột nào có ít giá trị hơn"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "Tạo nhóm từ sự kết hợp duy nhất của cả 2 cột",
+      "explanation": "GROUP BY city, dept tạo nhóm cho mỗi kết hợp (city, dept) duy nhất. Ví dụ: (HCM, IT), (HCM, QA), (HN, IT) là 3 nhóm riêng biệt."
+    },
+    {
+      "id": "sql_008", "topic": "sql", "topic_label": "SQL", "level": "medium", "level_label": "Trung bình",
+      "question": "Mệnh đề HAVING khác WHERE như thế nào?",
+      "options": ["Hoàn toàn giống nhau", "HAVING lọc sau GROUP BY trên kết quả tổng hợp, WHERE lọc hàng trước GROUP BY", "HAVING nhanh hơn WHERE", "WHERE dùng với hàm tổng hợp được"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "HAVING lọc sau GROUP BY, WHERE lọc trước GROUP BY",
+      "explanation": "WHERE không dùng được với aggregate functions (SUM, COUNT...). HAVING dùng để lọc sau khi đã GROUP BY. Ví dụ: HAVING COUNT(*) > 5."
+    },
+    {
+      "id": "sql_009", "topic": "sql", "topic_label": "SQL", "level": "medium", "level_label": "Trung bình",
+      "question": "CROSS JOIN tạo ra gì?",
+      "options": ["Chỉ hàng khớp từ 2 bảng", "Cartesian product — mọi hàng bảng A kết hợp với mọi hàng bảng B", "Giống LEFT JOIN", "Hàng không khớp từ cả hai bảng"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Cartesian product",
+      "explanation": "CROSS JOIN tạo tích Descartes. Bảng A 3 hàng × Bảng B 4 hàng = 12 hàng kết quả. Dùng khi cần tạo tất cả tổ hợp có thể, không cần điều kiện ON."
+    },
+    {
+      "id": "sql_010", "topic": "sql", "topic_label": "SQL", "level": "medium", "level_label": "Trung bình",
+      "question": "INNER JOIN và LEFT JOIN khác nhau thế nào?",
+      "options": ["Không khác gì", "INNER chỉ trả hàng khớp cả hai bảng; LEFT trả toàn bộ bảng trái + NULL nếu không khớp", "LEFT nhanh hơn", "INNER dùng cho nhiều hơn 2 bảng"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "INNER chỉ hàng khớp; LEFT trả toàn bộ bảng trái",
+      "explanation": "INNER JOIN chỉ lấy bản ghi tồn tại ở cả hai bảng. LEFT JOIN lấy toàn bộ bảng trái, bảng phải NULL nếu không khớp."
+    },
+    {
+      "id": "sql_011", "topic": "sql", "topic_label": "SQL", "level": "hard", "level_label": "Nâng cao",
+      "question": "CTE khác Subquery ở điểm nào?",
+      "options": ["Không khác", "CTE cải thiện readability và có thể tham chiếu nhiều lần, subquery lồng trong câu lệnh", "Subquery nhanh hơn luôn", "CTE là vĩnh viễn"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "CTE có thể tham chiếu nhiều lần, dễ đọc hơn",
+      "explanation": "CTE (WITH clause) đặt tên cho subquery, dễ đọc, có thể dùng lại trong cùng query, hỗ trợ đệ quy. Subquery lồng inline, khó đọc khi phức tạp. Performance tùy optimizer."
+    },
+    {
+      "id": "sql_012", "topic": "sql", "topic_label": "SQL", "level": "hard", "level_label": "Nâng cao",
+      "question": "ROW_NUMBER() vs RANK() vs DENSE_RANK() khi có tie?",
+      "options": ["Ba hàm cho kết quả giống nhau", "ROW_NUMBER: số duy nhất; RANK: bỏ số sau tie (1,1,3); DENSE_RANK: không bỏ số (1,1,2)", "RANK và DENSE_RANK giống nhau", "ROW_NUMBER bỏ qua tie"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "ROW_NUMBER duy nhất; RANK bỏ số (1,1,3); DENSE_RANK không bỏ (1,1,2)",
+      "explanation": "Với 2 hàng cùng giá trị: ROW_NUMBER→1,2 (tùy ý); RANK→1,1,3 (bỏ 2); DENSE_RANK→1,1,2. Chọn đúng hàm theo logic nghiệp vụ."
+    },
+    {
+      "id": "api_001", "topic": "api", "topic_label": "API", "level": "easy", "level_label": "Cơ bản",
+      "question": "HTTP method nào dùng để đọc dữ liệu (không thay đổi server)?",
+      "options": ["POST", "PUT", "GET", "DELETE"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "GET",
+      "explanation": "GET là read-only, safe và idempotent. Không có request body. Dùng để lấy resource."
+    },
+    {
+      "id": "api_002", "topic": "api", "topic_label": "API", "level": "easy", "level_label": "Cơ bản",
+      "question": "Status code 404 có nghĩa là gì?",
+      "options": ["Server lỗi", "Unauthorized", "Not Found — resource không tồn tại", "Redirect"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "Not Found",
+      "explanation": "404 Not Found: URL đúng nhưng resource không tồn tại. Khác 405 (method not allowed) và 410 (Gone — đã từng tồn tại nhưng đã xóa)."
+    },
+    {
+      "id": "api_003", "topic": "api", "topic_label": "API", "level": "easy", "level_label": "Cơ bản",
+      "question": "Status code 200 và 201 khác nhau thế nào?",
+      "options": ["Giống nhau", "200: OK (thành công chung), 201: Created (tạo resource mới thành công)", "201 là lỗi client", "200 chỉ dùng cho GET"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "200 OK (thành công chung), 201 Created (tạo mới thành công)",
+      "explanation": "200 OK: request thành công (GET, PUT, PATCH). 201 Created: POST tạo resource mới thành công, thường kèm Location header trỏ đến resource mới."
+    },
+    {
+      "id": "api_004", "topic": "api", "topic_label": "API", "level": "easy", "level_label": "Cơ bản",
+      "question": "HTTP method nào xóa một resource?",
+      "options": ["REMOVE", "ERASE", "DELETE", "CLEAR"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "DELETE",
+      "explanation": "DELETE là method chuẩn để xóa resource. Idempotent: gọi nhiều lần kết quả giống nhau (resource đã không còn)."
+    },
+    {
+      "id": "api_005", "topic": "api", "topic_label": "API", "level": "easy", "level_label": "Cơ bản",
+      "question": "Status code 500 thuộc nhóm nào?",
+      "options": ["2xx Success", "3xx Redirect", "4xx Client Error", "5xx Server Error"],
+      "answer_index": 3, "answer_letter": "D", "answer_text": "5xx Server Error",
+      "explanation": "5xx là lỗi phía server. 500 Internal Server Error là lỗi chung. 502 Bad Gateway, 503 Service Unavailable, 504 Gateway Timeout."
+    },
+    {
+      "id": "api_006", "topic": "api", "topic_label": "API", "level": "medium", "level_label": "Trung bình",
+      "question": "PUT khác PATCH như thế nào?",
+      "options": ["Giống nhau", "PUT thay thế toàn bộ resource, PATCH cập nhật một phần", "PATCH nhanh hơn", "PUT chỉ dùng cho tạo mới"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "PUT thay thế toàn bộ, PATCH cập nhật một phần",
+      "explanation": "PUT gửi toàn bộ representation mới (fields thiếu có thể bị null). PATCH chỉ gửi các fields cần thay đổi. PATCH tiết kiệm bandwidth hơn."
+    },
+    {
+      "id": "api_007", "topic": "api", "topic_label": "API", "level": "medium", "level_label": "Trung bình",
+      "question": "Status code 401 vs 403 khác nhau thế nào?",
+      "options": ["Giống nhau", "401: chưa xác thực (no/invalid token), 403: đã xác thực nhưng không có quyền", "403 là lỗi server", "401 chỉ dùng cho Basic Auth"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "401: chưa xác thực; 403: xác thực rồi nhưng không có quyền",
+      "explanation": "401 Unauthorized: chưa đăng nhập hoặc token sai/hết hạn → cần xác thực lại. 403 Forbidden: đã xác thực nhưng role/permission không đủ → không thể truy cập dù đăng nhập."
+    },
+    {
+      "id": "api_008", "topic": "api", "topic_label": "API", "level": "medium", "level_label": "Trung bình",
+      "question": "Status code 429 có nghĩa là gì?",
+      "options": ["Not Found", "Too Many Requests — bị rate limit", "Gateway Timeout", "Unprocessable Entity"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Too Many Requests — bị rate limit",
+      "explanation": "429 Too Many Requests: client gọi API quá nhiều lần, bị rate limiting. Thường kèm header Retry-After cho biết khi nào có thể gọi lại."
+    },
+    {
+      "id": "api_009", "topic": "api", "topic_label": "API", "level": "medium", "level_label": "Trung bình",
+      "question": "JWT gồm mấy phần được ngăn cách bởi dấu chấm?",
+      "options": ["2 phần", "3 phần: Header.Payload.Signature", "4 phần", "1 phần"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "3 phần: Header.Payload.Signature",
+      "explanation": "JWT = Header (alg, type) + Payload (claims) + Signature (verify). Mỗi phần Base64URL encoded. Signature đảm bảo token không bị giả mạo."
+    },
+    {
+      "id": "api_010", "topic": "api", "topic_label": "API", "level": "hard", "level_label": "Nâng cao",
+      "question": "OAuth 2.0 Authorization Code Flow vs Client Credentials Flow?",
+      "options": ["Giống nhau", "Auth Code: có user login/consent (cho app); Client Credentials: server-to-server không có user", "Client Credentials an toàn hơn luôn", "Auth Code chỉ cho mobile"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Auth Code: có user; Client Credentials: server-to-server",
+      "explanation": "Authorization Code: end-user tham gia, có consent screen, dùng cho web/mobile. Client Credentials: M2M không có user, dùng cho microservices/background jobs."
+    },
+    {
+      "id": "api_011", "topic": "api", "topic_label": "API", "level": "hard", "level_label": "Nâng cao",
+      "question": "GraphQL giải quyết over-fetching và under-fetching thế nào?",
+      "options": ["GraphQL nhanh hơn REST", "Client khai báo chính xác fields cần, tránh over-fetch; 1 request lấy nhiều resource, tránh under-fetch", "GraphQL tự cache tốt hơn", "GraphQL không có version"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Client khai báo đúng fields cần, 1 request = nhiều resources",
+      "explanation": "Over-fetching: REST trả toàn bộ fields. Under-fetching: phải gọi nhiều endpoints. GraphQL cho client query chính xác cần gì, server chỉ trả đó."
+    },
+    {
+      "id": "plw_001", "topic": "plw", "topic_label": "Playwright", "level": "easy", "level_label": "Cơ bản",
+      "question": "Playwright hỗ trợ những browser nào?",
+      "options": ["Chỉ Chrome", "Chrome, Firefox, Safari (WebKit)", "Chrome và Edge", "Tất cả browser trên thị trường"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Chrome (Chromium), Firefox, Safari (WebKit)",
+      "explanation": "Playwright hỗ trợ Chromium (Chrome/Edge), Firefox, WebKit (Safari). Ưu thế hơn Puppeteer chỉ có Chromium."
+    },
+    {
+      "id": "plw_002", "topic": "plw", "topic_label": "Playwright", "level": "easy", "level_label": "Cơ bản",
+      "question": "Cách bắt element theo placeholder trong Playwright native?",
+      "options": ["page.$(\"[placeholder='Email']\")", "page.getByPlaceholder(\"Email\")", "page.locator(\"input\").placeholder(\"Email\")", "page.find(\"placeholder=Email\")"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "page.getByPlaceholder(\"Email\")",
+      "explanation": "page.getByPlaceholder() là Playwright-native selector. Dễ đọc, semantic, chống brittle hơn XPath/CSS. Các API tương tự: getByRole, getByText, getByLabel, getByTestId."
+    },
+    {
+      "id": "plw_003", "topic": "plw", "topic_label": "Playwright", "level": "easy", "level_label": "Cơ bản",
+      "question": "Cách bắt element theo text hiển thị trong Playwright?",
+      "options": ["page.findText(\"Submit\")", "page.getByText(\"Submit\")", "page.locator(\"text=Submit\") là cách duy nhất", "page.getText(\"Submit\")"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "page.getByText(\"Submit\")",
+      "explanation": "page.getByText() là Playwright-native. Cũng có thể dùng page.locator(\"text=Submit\") nhưng getByText là API mới được khuyến nghị hơn."
+    },
+    {
+      "id": "plw_004", "topic": "plw", "topic_label": "Playwright", "level": "easy", "level_label": "Cơ bản",
+      "question": "XPath bắt button có text 'Đăng nhập' trong Playwright?",
+      "options": ["page.locator(\"//button[text()='Đăng nhập']\")", "page.xpath(\"button:Đăng nhập\")", "page.getByXPath(\"button\")", "page.find(\"xpath=button\")"],
+      "answer_index": 0, "answer_letter": "A", "answer_text": "page.locator(\"//button[text()='Đăng nhập']\")",
+      "explanation": "Playwright hỗ trợ XPath qua page.locator(\"//xpath...\"). Tuy nhiên khuyến nghị dùng page.getByRole(\"button\", {name: \"Đăng nhập\"}) để tránh brittle selectors."
+    },
+    {
+      "id": "plw_005", "topic": "plw", "topic_label": "Playwright", "level": "easy", "level_label": "Cơ bản",
+      "question": "Cách bắt element theo ARIA role?",
+      "options": ["page.getByRole(\"button\", {name: \"Submit\"})", "page.findRole(\"button\")", "page.locator(\"role=button\")", "page.getElement(\"button\")"],
+      "answer_index": 0, "answer_letter": "A", "answer_text": "page.getByRole(\"button\", {name: \"Submit\"})",
+      "explanation": "page.getByRole() sử dụng ARIA roles — cách tốt nhất vì semantic, resilient, test accessibility. Ví dụ: getByRole(\"textbox\", {name: \"Email\"}), getByRole(\"checkbox\")."
+    },
+    {
+      "id": "plw_006", "topic": "plw", "topic_label": "Playwright", "level": "easy", "level_label": "Cơ bản",
+      "question": "Cách bắt element theo data-testid attribute?",
+      "options": ["page.locator(\"[data-testid='submit-btn']\")", "page.getByTestId(\"submit-btn\")", "Cả hai đều đúng", "Playwright không hỗ trợ data-testid"],
+      "answer_index": 2, "answer_letter": "C", "answer_text": "Cả hai đều đúng",
+      "explanation": "Cả hai đều hoạt động. page.getByTestId() là shorthand Playwright-native (mặc định dùng data-testid). CSS selector [data-testid=\"submit-btn\"] cũng đúng."
+    },
+    {
+      "id": "plw_007", "topic": "plw", "topic_label": "Playwright", "level": "medium", "level_label": "Trung bình",
+      "question": "page.locator() khác page.$() như thế nào?",
+      "options": ["Giống nhau", "locator() lazy, auto-retry, auto-wait; $() lấy ElementHandle ngay → có thể stale", "$() là cách mới hơn", "locator() chỉ cho XPath"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "locator() lazy auto-retry; $() lấy ngay có thể stale",
+      "explanation": "Locator là lazy reference, tự retry khi element chưa sẵn sàng. ElementHandle ($) lấy ngay tại thời điểm gọi, có thể stale sau DOM update. Playwright khuyến nghị Locator."
+    },
+    {
+      "id": "plw_008", "topic": "plw", "topic_label": "Playwright", "level": "medium", "level_label": "Trung bình",
+      "question": "Cách xử lý dialog alert() trong Playwright?",
+      "options": ["Bỏ qua", "page.on(\"dialog\", d => d.accept()) trước action", "Dùng try/catch", "Không thể xử lý"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "page.on(\"dialog\", d => d.accept()) TRƯỚC khi trigger",
+      "explanation": "Phải đăng ký page.on(\"dialog\") TRƯỚC khi action trigger dialog. Sau đó: dialog.accept(), dialog.dismiss(), hoặc dialog.fill(text) cho prompt."
+    },
+    {
+      "id": "plw_009", "topic": "plw", "topic_label": "Playwright", "level": "hard", "level_label": "Nâng cao",
+      "question": "test.extend() trong Playwright dùng để làm gì?",
+      "options": ["Extend timeout", "Tạo custom fixture inject vào test, thay cho beforeEach", "Extend browser capabilities", "Thêm assertion mới"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Tạo custom fixture inject vào test",
+      "explanation": "test.extend() là cách Playwright-native tạo fixtures. POM/helper inject tự động vào mỗi test, không cần khởi tạo trong beforeEach, giảm boilerplate."
+    },
+    {
+      "id": "perf_001", "topic": "perf", "topic_label": "Performance Testing", "level": "easy", "level_label": "Cơ bản",
+      "question": "Load Test là gì?",
+      "options": ["Test với 1 user", "Test với số lượng user dự kiến trong điều kiện bình thường", "Test đến khi hệ thống sụp đổ", "Test ngẫu nhiên"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Test với số lượng user dự kiến trong điều kiện bình thường",
+      "explanation": "Load Test: mô phỏng số lượng user/load dự kiến trong điều kiện bình thường để xác nhận hệ thống đáp ứng SLA (response time, throughput)."
+    },
+    {
+      "id": "perf_002", "topic": "perf", "topic_label": "Performance Testing", "level": "easy", "level_label": "Cơ bản",
+      "question": "Stress Test khác Load Test ở điểm nào?",
+      "options": ["Stress Test nhẹ hơn", "Stress Test tăng load vượt ngưỡng để tìm breaking point, Load Test là load bình thường", "Giống nhau", "Stress Test chỉ test 1 endpoint"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Stress Test vượt ngưỡng tìm breaking point; Load Test xác nhận SLA",
+      "explanation": "Stress Test: đẩy load cao hơn capacity để tìm breaking point và cách hệ thống fail. Load Test: test ở ngưỡng expected để xác nhận SLA. Mục tiêu khác nhau."
+    },
+    {
+      "id": "perf_003", "topic": "perf", "topic_label": "Performance Testing", "level": "easy", "level_label": "Cơ bản",
+      "question": "Spike Test mô phỏng điều gì?",
+      "options": ["Load đều đặn trong nhiều giờ", "Đột biến traffic đột ngột trong thời gian ngắn rồi giảm", "Load tăng dần từ từ", "Test một user liên tục"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Đột biến traffic đột ngột trong thời gian ngắn",
+      "explanation": "Spike Test: mô phỏng traffic đột biến (flash sale, viral event). Kiểm tra hệ thống chịu được sudden spike và recover sau đó. Khác Stress Test ở chỗ spike là đột ngột, không tăng dần."
+    },
+    {
+      "id": "perf_004", "topic": "perf", "topic_label": "Performance Testing", "level": "easy", "level_label": "Cơ bản",
+      "question": "Soak Test (Endurance Test) kiểm tra điều gì?",
+      "options": ["Hiệu năng cao nhất có thể", "Hệ thống chạy load bình thường trong thời gian dài để tìm memory leak", "Đột biến tải", "Breaking point"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Load bình thường trong thời gian dài, tìm memory leak",
+      "explanation": "Soak/Endurance Test: chạy load bình thường trong nhiều giờ/ngày để phát hiện memory leak, connection pool exhaustion, log file bloat — vấn đề không thấy trong test ngắn."
+    },
+    {
+      "id": "perf_005", "topic": "perf", "topic_label": "Performance Testing", "level": "medium", "level_label": "Trung bình",
+      "question": "Trong k6, Threshold dùng để làm gì?",
+      "options": ["Giới hạn số VU", "Định nghĩa pass/fail criteria cho test (SLA)", "Set timeout cho request", "Cấu hình ramp-up"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Định nghĩa pass/fail criteria (SLA)",
+      "explanation": "Thresholds là pass/fail criteria. Ví dụ: http_req_duration: [\"p(95)<500\"] → 95% requests phải < 500ms. Nếu vi phạm, exit code != 0 → CI fail."
+    },
+    {
+      "id": "perf_006", "topic": "perf", "topic_label": "Performance Testing", "level": "medium", "level_label": "Trung bình",
+      "question": "Kịch bản test nào phù hợp cho hệ thống e-commerce trước Black Friday?",
+      "options": ["Chỉ Soak Test", "Load Test + Spike Test + Stress Test", "Chỉ Unit Test", "Chỉ Stress Test"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Load Test + Spike Test + Stress Test",
+      "explanation": "Cần bộ 3: Load Test (verify SLA ngày thường), Spike Test (mô phỏng flash sale), Stress Test (biết khi nào fail để có scaling plan). Soak Test thêm nếu có thời gian."
+    },
+    {
+      "id": "perf_007", "topic": "perf", "topic_label": "Performance Testing", "level": "medium", "level_label": "Trung bình",
+      "question": "p95 = 800ms có nghĩa là gì?",
+      "options": ["95% requests chậm hơn 800ms", "95% requests hoàn thành trong 800ms hoặc ít hơn", "Response time trung bình là 800ms", "Tối đa 800ms"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "95% requests hoàn thành trong ≤ 800ms",
+      "explanation": "p95 = 800ms: 95% requests hoàn thành trong ≤ 800ms. 5% còn lại chậm hơn. Percentile quan trọng hơn average vì average ẩn outliers. SLA thường dùng p95 hoặc p99."
+    },
+    {
+      "id": "perf_008", "topic": "perf", "topic_label": "Performance Testing", "level": "hard", "level_label": "Nâng cao",
+      "question": "Khi thiết kế kịch bản test API, điều nào quan trọng nhất?",
+      "options": ["Chạy càng nhiều VU càng tốt", "Mô phỏng đúng user journey thực tế với data đa dạng, think time, và correlation", "Test toàn bộ endpoints như nhau", "Chỉ test endpoint quan trọng nhất"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Realistic scenarios với data đa dạng, think time, correlation",
+      "explanation": "Kịch bản thực tế cần: realistic user flow (login→browse→cart→checkout), data variety (CSV parameterization), think time (user không click liên tục), correlation (token từ login dùng cho request sau)."
+    },
+    {
+      "id": "istqb_001", "topic": "istqb", "topic_label": "ISTQB", "level": "easy", "level_label": "Cơ bản",
+      "question": "Theo ISTQB, mục đích chính của kiểm thử là gì?",
+      "options": ["Chứng minh không có bug", "Đánh giá chất lượng và giảm risk qua việc tìm defect", "Đảm bảo hoàn hảo 100%", "Thay thế code review"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Đánh giá chất lượng và giảm risk",
+      "explanation": "ISTQB: kiểm thử không thể chứng minh không có lỗi, mà nhằm đánh giá chất lượng, giảm risk failure trong production, cung cấp thông tin cho stakeholder."
+    },
+    {
+      "id": "istqb_002", "topic": "istqb", "topic_label": "ISTQB", "level": "easy", "level_label": "Cơ bản",
+      "question": "Error, Defect, Failure khác nhau thế nào?",
+      "options": ["Ba từ đồng nghĩa", "Error: hành động sai của người → Defect: lỗi trong code → Failure: hệ thống không hoạt động đúng khi run", "Failure xảy ra trước Defect", "Defect = Error"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Error → Defect → Failure (chuỗi nhân quả)",
+      "explanation": "Error/Mistake: con người làm sai (hiểu nhầm requirement). Defect/Bug: lỗi trong artifact (code, doc). Failure: hệ thống không thực hiện đúng yêu cầu khi runtime."
+    },
+    {
+      "id": "istqb_003", "topic": "istqb", "topic_label": "ISTQB", "level": "easy", "level_label": "Cơ bản",
+      "question": "Shift-Left Testing có nghĩa là gì?",
+      "options": ["Test từ phải sang trái", "Bắt đầu kiểm thử sớm hơn trong SDLC — từ requirements/design", "Test ngược từ production", "Chỉ dùng cho Agile"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Bắt đầu testing sớm hơn trong SDLC",
+      "explanation": "Shift-Left: dịch chuyển testing về sớm trong vòng đời phát triển. Tìm defect ở requirements/design rẻ hơn nhiều so với sau khi code xong. Bao gồm: review, static analysis, early automation."
+    },
+    {
+      "id": "istqb_004", "topic": "istqb", "topic_label": "ISTQB", "level": "easy", "level_label": "Cơ bản",
+      "question": "Pesticide Paradox là gì?",
+      "options": ["Test nhiều thì bug ít", "Test cases cũ lặp lại sẽ không tìm được bug mới", "Test nhanh hơn với ít case", "Regression luôn fail"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Test cases cũ lặp lại không tìm được bug mới",
+      "explanation": "Pesticide Paradox (nguyên tắc 5 ISTQB): như thuốc trừ sâu, nếu dùng mãi một bộ test, bug đã được fix theo chúng. Cần thường xuyên review và thêm test mới."
+    },
+    {
+      "id": "istqb_005", "topic": "istqb", "topic_label": "ISTQB", "level": "medium", "level_label": "Trung bình",
+      "question": "Equivalence Partitioning là gì?",
+      "options": ["Test tất cả giá trị có thể", "Chia input thành nhóm mà phần mềm xử lý tương đương, test 1 đại diện/nhóm", "Chỉ test boundary values", "Random testing"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Chia input thành nhóm tương đương, test 1 đại diện/nhóm",
+      "explanation": "EP chia input thành partitions (valid/invalid). Mỗi partition chỉ cần 1 test case đại diện. Ví dụ: tuổi hợp lệ 18-60 → test 30 (valid), 10 (invalid <18), 70 (invalid >60)."
+    },
+    {
+      "id": "istqb_006", "topic": "istqb", "topic_label": "ISTQB", "level": "medium", "level_label": "Trung bình",
+      "question": "Boundary Value Analysis (BVA) kiểm tra gì?",
+      "options": ["Giá trị trung bình", "Giá trị tại và xung quanh ranh giới của equivalence partitions", "Giá trị ngẫu nhiên", "Toàn bộ partition"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Giá trị tại và xung quanh ranh giới (boundary)",
+      "explanation": "BVA: lỗi thường xảy ra ở boundary (>, >=, <, <=). Với range 18-60, test: 17, 18, 19 (lower boundary) và 59, 60, 61 (upper boundary). BVA bổ sung cho EP không thay thế."
+    },
+    {
+      "id": "istqb_007", "topic": "istqb", "topic_label": "ISTQB", "level": "medium", "level_label": "Trung bình",
+      "question": "Verification vs Validation khác nhau thế nào?",
+      "options": ["Giống nhau", "Verification: 'Xây đúng cách không?' (theo spec); Validation: 'Xây đúng thứ không?' (theo nhu cầu user)", "Validation trước Verification", "Verification là testing, Validation là review"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Verification: đúng spec; Validation: đúng nhu cầu user",
+      "explanation": "Verification: kiểm tra sản phẩm đúng với specification (internal). Validation: kiểm tra đáp ứng nhu cầu thực của user (external). Cả hai đều cần thiết."
+    },
+    {
+      "id": "istqb_008", "topic": "istqb", "topic_label": "ISTQB", "level": "medium", "level_label": "Trung bình",
+      "question": "Test Estimation bằng kỹ thuật nào phổ biến?",
+      "options": ["Chỉ dùng kinh nghiệm", "Three-point estimation, Planning Poker, Wideband Delphi, Function Point Analysis", "Ước tính ngẫu nhiên", "Chỉ dùng historical data"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Three-point, Planning Poker, Wideband Delphi, FPA",
+      "explanation": "ISTQB đề cập: Three-point (O+4M+P)/6, Wideband Delphi (expert group consensus), Planning Poker (Agile), dựa trên metrics lịch sử. Kết hợp nhiều kỹ thuật cho kết quả tốt hơn."
+    },
+    {
+      "id": "istqb_009", "topic": "istqb", "topic_label": "ISTQB", "level": "hard", "level_label": "Nâng cao",
+      "question": "Decision Table Testing phù hợp nhất khi nào?",
+      "options": ["Khi test UI", "Khi logic nghiệp vụ phụ thuộc nhiều điều kiện kết hợp (combinations of conditions → actions)", "Khi test performance", "Khi test database"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Khi logic nghiệp vụ có nhiều combinations of conditions",
+      "explanation": "Decision Table: mỗi cột = 1 test case với combination điều kiện cụ thể. Đảm bảo cover tất cả business rule combinations. Ví dụ: discount rules phụ thuộc membership + order amount + coupon."
+    },
+    {
+      "id": "istqb_010", "topic": "istqb", "topic_label": "ISTQB", "level": "hard", "level_label": "Nâng cao",
+      "question": "State Transition Testing dùng khi nào?",
+      "options": ["Luôn luôn", "Khi system có states và transitions giữa chúng (login flow, order lifecycle, session)", "Chỉ cho embedded systems", "Khi không có requirements"],
+      "answer_index": 1, "answer_letter": "B", "answer_text": "Khi system có states và transitions (login flow, payment states...)",
+      "explanation": "State Transition Testing: vẽ state diagram (states, events, transitions, guards). Mỗi test case đi qua một path. Phát hiện invalid transitions. Phù hợp: auth flow, payment states, UI wizard."
+    }
+  ],
+  "slack_api_example": {
+    "description": "Example Node.js code to post a random daily quiz question to Slack",
+    "endpoint": "https://slack.com/api/chat.postMessage",
+    "sample_code": "const questions = require('./daily_quiz_slack.json').questions;\nconst randomQ = questions[Math.floor(Math.random() * questions.length)];\nconst letters = ['A','B','C','D'];\nconst optText = randomQ.options.map((o,i) => `${letters[i]}. ${o}`).join('\\n');\n\nconst payload = {\n  channel: '#daily-quiz',\n  blocks: [\n    { type: 'header', text: { type: 'plain_text', text: `🧠 Daily Quiz — ${randomQ.topic_label} (${randomQ.level_label})` } },\n    { type: 'section', text: { type: 'mrkdwn', text: `*${randomQ.question}*` } },\n    { type: 'section', text: { type: 'mrkdwn', text: optText } },\n    { type: 'context', elements: [{ type: 'mrkdwn', text: 'React với 🇦 🇧 🇨 🇩 · Đáp án reveal sau 4h ⏳' }] }\n  ]\n};"
+  }
+}

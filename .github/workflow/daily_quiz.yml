@@ -1,0 +1,57 @@
+name: Daily QA Quiz
+
+on:
+  # ── Auto: 9:00 SA giờ VN (UTC+7 = 02:00 UTC), thứ 2 đến thứ 6 ──
+  schedule:
+    - cron: "0 2 * * 1-5"
+
+  # ── Manual trigger từ GitHub UI (Actions tab → Run workflow) ──
+  workflow_dispatch:
+    inputs:
+      answer_delay_minutes:
+        description: "Delay trước khi reveal answer (phút)"
+        required: false
+        default: "240"
+
+jobs:
+  post-quiz:
+    name: Post Daily Quiz to Slack
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: write   # cần để commit used_ids.json
+
+    steps:
+      # 1. Checkout repo (để đọc/ghi used_ids.json)
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # 2. Setup Node.js
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      # 3. Tính delay (manual override hoặc default 4h)
+      - name: Set answer delay
+        id: delay
+        run: |
+          MINUTES="${{ github.event.inputs.answer_delay_minutes || '240' }}"
+          echo "delay_ms=$(( MINUTES * 60000 ))" >> "$GITHUB_OUTPUT"
+
+      # 4. Chạy script
+      - name: Send quiz
+        env:
+          SLACK_BOT_TOKEN:  ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: ${{ secrets.SLACK_CHANNEL_ID }}
+          ANSWER_DELAY_MS:  ${{ steps.delay.outputs.delay_ms }}
+        run: node scripts/send_quiz.js
+
+      # 5. Commit used_ids.json (track câu đã dùng)
+      - name: Commit used_ids.json
+        run: |
+          git config user.name  "Quiz Bot"
+          git config user.email "quiz-bot@github-actions"
+          git add used_ids.json
+          git diff --staged --quiet || git commit -m "chore: mark quiz used [skip ci]"
+          git push
